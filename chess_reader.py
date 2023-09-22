@@ -1,5 +1,7 @@
 import gtts
 from playsound import playsound
+import time
+import os
 
 rawfile="rr/ppp"
 newfile=""
@@ -36,6 +38,7 @@ for rawletter in rawfile:
         tts = gtts.gTTS(newfile)
         tts.save("./hello.mp3")
         playsound("./hello.mp3")
+        os.remove("./hello.mp3")
         coords[0]+=1
     elif rawletter=="p":
         newfile="pawn "
@@ -44,10 +47,10 @@ for rawletter in rawfile:
         tts = gtts.gTTS(newfile)
         tts.save("./hello.mp3")
         playsound("./hello.mp3")
+        os.remove("./hello.mp3")
         coords[0]+=1
     print(coords)
-        
-
+    time.sleep(1)
 
 
 #tts = gtts.gTTS(newfile)
