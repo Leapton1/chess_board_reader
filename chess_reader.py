@@ -1,59 +1,54 @@
+import os
+import time
 import gtts
 from playsound import playsound
-import time
-import os
 
-rawfile="rr/ppp"
-newfile=""
-coords=[1,8]
+fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 
-def numtoletter(num):
-    if num==1:
-        return "a"
-    elif num==2:
-        return "b"
-    elif num==3:
-        return "c"
-    elif num==4:
-        return "d"
-    elif num==5:
-        return "e"
-    elif num==6:
-        return "f"
-    elif num==7:
-        return "g"
-    elif num==8:
-        return "h"
+def letter(num):
+    return "abcdefgh"[num - 1]
 
-for rawletter in rawfile:
-    if rawletter=="/":
-        coords[0]=1
-        coords[1]-=1
-    elif rawletter.isdigit():
-        coords[0]+=int(rawletter)
-    elif rawletter=="r":
-        newfile="rook "
-        newfile+=numtoletter(coords[0])+" "+str(coords[1])
-        print(newfile)
-        tts = gtts.gTTS(newfile)
-        tts.save("./hello.mp3")
-        playsound("./hello.mp3")
-        os.remove("./hello.mp3")
-        coords[0]+=1
-    elif rawletter=="p":
-        newfile="pawn "
-        newfile+=numtoletter(coords[0])+" "+str(coords[1])
-        print(newfile)
-        tts = gtts.gTTS(newfile)
-        tts.save("./hello.mp3")
-        playsound("./hello.mp3")
-        os.remove("./hello.mp3")
-        coords[0]+=1
-    print(coords)
-    time.sleep(1)
+def phoneme(num):
+    return ["ay", "b",  "c", "d", "e", "f",  "g", "h"][num - 1]
+
+def colour(piece):
+    if piece.islower():
+        return "black"
+    return "white"
+
+def say(text):
+    tts = gtts.gTTS(text)
+    tts.save("./speech.mp3")
+    playsound("./speech.mp3")
+    os.remove("./speech.mp3")
 
 
-#tts = gtts.gTTS(newfile)
-#tts = gtts.gTTS("ooga booga booga booga, eega dooga donga dinga")
-#tts.save("hello.mp3")
-#playsound("hello.mp3")
+def main():
+    coords = [1, 8]
+    for character in fen:
+        if character == "/":
+            coords[0] = 1
+            coords[1] -= 1
+        elif character.isdigit():
+            coords[0] += int(character)
+        elif character in "kK":
+            say(colour(character) + " king " + phoneme(coords[0]) + " " + str(coords[1]))
+            coords[0] += 1
+        elif character in "qQ":
+            say(colour(character) + " queen " + phoneme(coords[0]) + " " + str(coords[1]))
+            coords[0] += 1
+        elif character in "rR":
+            say(colour(character) + " rook " + phoneme(coords[0]) + " " + str(coords[1]))
+            coords[0] += 1
+        elif character in "bB":
+            say(colour(character) + " bishop " + phoneme(coords[0]) + " " + str(coords[1]))
+            coords[0] += 1
+        elif character in "nN":
+            say(colour(character) + " knight " + phoneme(coords[0]) + " " + str(coords[1]))
+            coords[0] += 1
+        elif character in "pP":
+            say(colour(character) + " pawn " + phoneme(coords[0]) + " " + str(coords[1]))
+            coords[0] += 1
+        time.sleep(1)
+
+main()
