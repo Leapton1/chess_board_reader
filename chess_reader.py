@@ -25,6 +25,9 @@ def colour(character):
 def piece(character):
     return PIECES[character.lower()]
 
+def all_pieces():
+    return list(PIECES.keys()) + list(map(lambda x: x.upper(), PIECES.keys()))
+
 def say(text):
     tts = gtts.gTTS(text)
     tts.save("./speech.mp3")
@@ -38,7 +41,7 @@ def main(position):
         if character == "/":
             coords[0] = 1
             coords[1] -= 1
-        elif character in list(PIECES.keys()) + list(map(lambda x: x.upper(), PIECES.keys())):
+        elif character in all_pieces():
             say(colour(character) + " " + piece(character) + " " + phoneme(coords[0]) + " " + str(coords[1]))
             coords[0] += 1
         elif character.isdigit():
