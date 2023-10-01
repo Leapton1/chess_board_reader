@@ -50,7 +50,7 @@ def say(text):
 
 
 def main(position):
-    """ Currently just echoes out teh start position. """
+    """ Currently just echoes out the start position. """
     coords = [1, 8]
     for character in position:
         if character == "/":
