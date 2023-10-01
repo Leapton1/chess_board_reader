@@ -1,9 +1,9 @@
 """ Converts a chess FEN string into speech """
 import os
-import time
 
 import gtts
 from playsound import playsound
+from readchar import readchar
 
 START_POSITION = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 PIECES = {
@@ -14,6 +14,24 @@ PIECES = {
     "k": "King",
     "p": "Pawn",
 }
+
+
+class Board():
+    """ Stores the position of the pieces in the board. """
+
+    def __init__(self):
+        self.pieces = {}
+        for piece in all_pieces():
+            self.pieces[piece] = []
+
+    def add(self, piece, rank, file):
+        """ Set a piece on the board, e.g. ("r", 4, 1) """
+        self.pieces[piece].append((rank, file,))
+
+    def query(self, piece):
+        """ Iterate through all pieces of that type. """
+        for position in self.pieces[piece]:
+            yield position
 
 
 def letter(num):
@@ -31,7 +49,7 @@ def colour(character):
     return "black" if character.islower() else "white"
 
 
-def piece(character):
+def piece_name(character):
     """ Convert the letter to a speakable name """
     return PIECES[character.lower()]
 
@@ -49,27 +67,38 @@ def say(text):
     os.remove("./speech.mp3")
 
 
-def main(position):
+def main(fen):
     """ Currently just echoes out the start position. """
+    board = Board()
     coords = [1, 8]
-    for character in position:
+    for character in fen:
         if character == "/":
             coords[0] = 1
             coords[1] -= 1
         elif character in all_pieces():
-            say(
-                colour(character)
-                + " "
-                + piece(character)
-                + " "
-                + phoneme(coords[0])
-                + " "
-                + str(coords[1])
-            )
+            board.add(character, coords[0], coords[1])
             coords[0] += 1
         elif character.isdigit():
             coords[0] += int(character)
-        time.sleep(1)
+
+    quitting = False
+    print("".join(all_pieces()) + " to list piece position, or 'x' to exit")
+    while not quitting:
+        character = readchar()
+        print(character)
+        if character == 'x':
+            quitting = True
+        if character in all_pieces():
+            for position in board.query(character):
+                say(
+                    colour(character)
+                    + " "
+                    + piece_name(character)
+                    + " "
+                    + phoneme(position[0])
+                    + " "
+                    + str(position[1])
+                )
 
 
 main(START_POSITION)
